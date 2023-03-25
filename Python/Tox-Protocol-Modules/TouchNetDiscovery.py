@@ -1,7 +1,5 @@
-from pymitter import EventEmitter
 import json
 import socket
-import struct
 		
 DiscMCastOut = op("DiscMCastOut")		# used for sending discovery announcement
 DiscUCastOut = op("DiscUCastOut")		# used for sending to server once it has been found
@@ -17,7 +15,7 @@ Hostname = socket.gethostname()
 # multicast has to be sent on physical NIC
 # for now, IPAddress = 127.0.0.1 so that server sends to localhost
 #IPAddress = Parent.par.Localaddress.eval()
-IPAddress = "127.0.0.1"
+IPAddress = Parent.par.Localaddress	#"127.0.0.1"
 
 Name = project.name 
 TouchNetPort = 22099
@@ -27,8 +25,6 @@ if Parent.par.Touchnet:
 
 DiscMCastPort = 9099	# same for in/out, meaning sender will receive its own messages
 DiscUCastPort = Parent.par.Discport.val#9199
-
-events = EventEmitter()
 
 def HandleUDPMessage(message):
 		# try to decode the packet
@@ -40,8 +36,9 @@ def HandleUDPMessage(message):
 			# upon deployment, just pass
 		return -1
 	else:
-		pType = payload["type"]
-		events.emit(str(pType), payload)
+		pType = str(payload["type"])
+		method_map[pType](payload)
+		# events.emit(str(pType), payload)
 		return 0
 
 def SendDiscovery():
@@ -51,7 +48,7 @@ def SendDiscovery():
 		"type":1,
 		"alias":Alias.eval(),
 		"hostname":Hostname,
-		"address":IPAddress,
+		"address":IPAddress.eval(),
 		"name":Name,
 		"discPort":DiscUCastPort,
 		"tnPort":TouchNetPort
@@ -62,7 +59,6 @@ def SendDiscovery():
 	# print("Client has sent discovery packet")
 	# return "Success >> Client has sent Discovery Packet"
 	
-@events.on("1")
 def HandleDiscoveryAnnc(payload):
 		# get the alias
 	peerAlias = payload["alias"]
@@ -130,8 +126,6 @@ def HandleDiscoveryAnnc(payload):
 
 	return 0
 
-
-@events.on("2")
 def HandleDiscoveryResponse(payload):
 		# test if there is already a server present
 	serverInPeers = PeersTable.findCell("Server", cols="Alias")
@@ -150,13 +144,12 @@ def HandleDiscoveryResponse(payload):
 	
 	return 1
 
-
 def SendDiscoveryResponse(address, port):
 	payload_dict = {
 		"type":2,
 		"alias":Alias.eval(),
 		"hostname":Hostname,
-		"address":IPAddress,
+		"address":IPAddress.eval(),
 		"name":Name
 	}
 	
@@ -183,7 +176,7 @@ def SendPeerNotification(address, port):
 		"type":1,
 		"alias":Alias.eval(),
 		"hostname":Hostname,
-		"address":IPAddress,
+		"address":IPAddress.eval(),
 		"name":Name,
 		"discPort":DiscUCastPort,
 		"tnPort":TouchNetPort
@@ -194,3 +187,9 @@ def SendPeerNotification(address, port):
 	DiscUCastOut.par.address = address
 	DiscUCastOut.par.port = port
 	DiscUCastOut.send(payload_string, terminator="")
+
+
+method_map = {
+	"1":HandleDiscoveryAnnc,
+	"2":HandleDiscoveryResponse
+}
