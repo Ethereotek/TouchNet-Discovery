@@ -7,6 +7,7 @@ parCollection.Enable = 0
 parCollection.Mode.menuIndex = 1
 parCollection.Discport = 9199
 parCollection.Searchforever = 1
+parCollection.Localaddress = ""
 
 tnd.op("DiscUCastOut").par.address = ""
 
