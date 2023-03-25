@@ -15,7 +15,7 @@ Hostname = socket.gethostname()
 # multicast has to be sent on physical NIC
 # for now, IPAddress = 127.0.0.1 so that server sends to localhost
 #IPAddress = Parent.par.Localaddress.eval()
-IPAddress = "127.0.0.1"
+IPAddress = Parent.par.Localaddress	#"127.0.0.1"
 
 Name = project.name 
 TouchNetPort = 22099
@@ -48,7 +48,7 @@ def SendDiscovery():
 		"type":1,
 		"alias":Alias.eval(),
 		"hostname":Hostname,
-		"address":IPAddress,
+		"address":IPAddress.eval(),
 		"name":Name,
 		"discPort":DiscUCastPort,
 		"tnPort":TouchNetPort
@@ -149,7 +149,7 @@ def SendDiscoveryResponse(address, port):
 		"type":2,
 		"alias":Alias.eval(),
 		"hostname":Hostname,
-		"address":IPAddress,
+		"address":IPAddress.eval(),
 		"name":Name
 	}
 	
@@ -176,7 +176,7 @@ def SendPeerNotification(address, port):
 		"type":1,
 		"alias":Alias.eval(),
 		"hostname":Hostname,
-		"address":IPAddress,
+		"address":IPAddress.eval(),
 		"name":Name,
 		"discPort":DiscUCastPort,
 		"tnPort":TouchNetPort

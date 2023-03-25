@@ -6,8 +6,8 @@ The TouchNet Discovery module has two modes: Client and Server. The terminology 
 
 As of version 1, it is fairly bare bones, and would require some attention to fit a particular use-case. My hope is that in time people will find their own applications, and an API can be built out to address those use-cases.
 
-## Dependencies
-TouchNet Discovery makes use of the python `pymitter` module; it will have to be downloaded and installed separately. The next minor update should automate the installation of dependencies.
+### Getting Started
+Navigate to the **/Build** folder in the package and drag and drop the component in a TouchDesigner network. If on a strictly peer network (no servers) fill in an **`Alias`** for your instance to go by, hit **`Initialize`** (just for good measure) and then **`Enable`**. You shoudl be ready to go. Read below for an explanation of Server/Client modes and other parameters.
 
 ### Client Mode
 This is the default mode of the module. An **`Alias`** must be assigned, then the user should initialize and enable the module using the provided custom parameters. At that point, the module will begin sending a discovery announcment message at regular intervals on a multicast address. Clients and servers both listen for and respond to these messages.
